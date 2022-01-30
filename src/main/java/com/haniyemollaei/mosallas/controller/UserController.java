@@ -9,20 +9,18 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import static jdk.nashorn.internal.objects.Global.print;
 
 @RestController
 @RequestMapping(path = "user-info")
 public class UserController {
     private final UserRepository userRepository;
+
+    public UserController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @GetMapping("/user-type")
     public ResponseEntity<String> getUserType(@RequestParam("mobileNo") String mobileNo) throws JsonProcessingException {
@@ -44,9 +42,7 @@ public class UserController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "message");
     }
 
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+
 
     @GetMapping("/")
     public List<User> list() {
@@ -72,18 +68,6 @@ public class UserController {
     public ResponseEntity<User> getUserByMobileNo(@RequestParam("mobileNo") String mobileNo) {
         List<User> userList = userRepository.findByMobileNo(mobileNo);
         return ResponseEntity.ok(userList.get(0));
-    }
-
-    @PostMapping(
-            value = "/register-user",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<User> postBody(@RequestBody User user) {
-        User persistedPerson = userRepository.save(user);
-        return ResponseEntity
-                .created(URI
-                        .create(String.format("/persons/%s", user.getId())))
-                .body(persistedPerson);
     }
 
 
