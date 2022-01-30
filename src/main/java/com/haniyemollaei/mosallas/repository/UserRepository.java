@@ -10,5 +10,7 @@ import java.util.List;
 @RepositoryRestResource(path = "user")
 public interface UserRepository extends JpaRepository<User , Long> {
 
+    List<User> findById(@Param("id") String id);
+
     List<User> findByMobileNo(@Param("mobileNo") String mobileNo);
 }
